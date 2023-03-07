@@ -1,4 +1,5 @@
 local dstools = require("DSTools.main")
+local telescope = require("DSTools.telescope")
 local utils = require("DSTools.utils")
 
 local M = {}
@@ -62,6 +63,12 @@ M.create_commands = function()
         end
         dstools.add_case(case_name, case_citations, case_local, case_include)
     end, {})
+
+    vim.api.nvim_create_user_command(
+        "DSSearchCases",
+        telescope.search_case,
+        {}
+    )
 end
 
 return M
