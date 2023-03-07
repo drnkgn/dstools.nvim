@@ -3,6 +3,7 @@ local json = require("DSTools.json")
 local M = {}
 
 M.generate_default_filename = function()
+    -- TODO: probably a good idea to support relative path as well
     return string.format(
         "TEMP_%s",
         string.gsub(
@@ -30,6 +31,19 @@ M.store_cache = function(path)
         }))
         io.close(file)
     end
+end
+
+M.load_cache = function(path)
+    local lines = {}
+    local file = io.open(path, "r")
+    if file then
+        for line in file:lines() do
+            lines[#lines+1] = line
+        end
+        io.close(file)
+        return json.decode(table.concat(lines))
+    end
+    return nil
 end
 
 M.get_visual_selection = function()

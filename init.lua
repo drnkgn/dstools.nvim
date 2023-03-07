@@ -1,12 +1,14 @@
+local utils = require("DSTools.utils")
+
 local M = {}
 
 M.setup = function()
-    if not vim.b.ds_cache then
-        vim.b.ds_cache = {
-            legislations = {},
-            cases = {},
-        }
-    end
+    vim.b.ds_cache = utils.load_cache(
+        utils.generate_default_filename()
+    ) or {
+        legislations = {},
+        cases = {},
+    }
     require("DSTools.commands").create_commands()
 end
 
