@@ -5,6 +5,10 @@ local M = {}
 
 M.create_commands = function()
     vim.api.nvim_create_user_command("DSStoreCache", function(opts)
+        utils.store_cache(
+            (opts.args == "" and utils.generate_default_filename())
+                or opts.args
+        )
     end, { nargs = "?" })
 
     vim.api.nvim_create_user_command("DSAddCase", function()

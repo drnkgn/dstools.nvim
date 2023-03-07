@@ -1,4 +1,17 @@
+local json = require("DSTools.json")
+
 local M = {}
+
+M.generate_default_filename = function()
+    return string.format(
+        "TEMP_%s",
+        string.gsub(
+            vim.fn.expand("%:t"),
+            "xml",
+            "json"
+        )
+    )
+end
 
 M.str2chars = function(str)
     local t = {}
@@ -6,6 +19,17 @@ M.str2chars = function(str)
         t[#t+1] = c
     end
     return t
+end
+
+M.store_cache = function(path)
+    local file = io.open(path, "w")
+    if file then
+        file:write(json.encode(vim.b.ds_cache or {
+            legislation = {},
+            cases = {},
+        }))
+        io.close(file)
+    end
 end
 
 M.get_visual_selection = function()
