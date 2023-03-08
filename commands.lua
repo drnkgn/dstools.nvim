@@ -24,12 +24,13 @@ M.create_commands = function()
             table.insert(case_citations, dstools.parse_citation(citation))
         end
 
-        local opt = vim.fn.input("Include? (y/n): ")
-        if opt:lower() == "y" then
+        local opt = vim.fn.input("Include? (ENTER/n): ")
+        print(opt)
+        if opt == "" then
             case_include = true
         end
-        opt = vim.fn.input("Local? (y/n): ")
-        if opt:lower() == "y" then
+        opt = vim.fn.input("Local? (ENTER/n): ")
+        if opt == "" then
             case_local = true
         end
         dstools.add_case(case_name, case_citations, case_local, case_include)
@@ -44,7 +45,7 @@ M.create_commands = function()
         local idx = 1
         while true do
             citation = vim.fn.input(string.format(
-                "Citation %d:",
+                "Citation %d: ",
                 idx
             ))
             if citation == "" then
@@ -53,12 +54,12 @@ M.create_commands = function()
             case_citations[#case_citations+1] = citation
             idx = idx + 1
         end
-        local opt = vim.fn.input("Include? (y/n): ")
-        if opt:lower() == "y" then
+        local opt = vim.fn.input("Include? (ENTER/n): ")
+        if opt == "" then
             case_include = true
         end
-        opt = vim.fn.input("Local? (y/n): ")
-        if opt:lower() == "y" then
+        opt = vim.fn.input("Local? (ENTER/n): ")
+        if opt == "" then
             case_local = true
         end
         dstools.add_case(case_name, case_citations, case_local, case_include)
