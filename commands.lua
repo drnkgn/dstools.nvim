@@ -90,7 +90,7 @@ M.create_commands = function()
         end
         table.sort(local_case, sort_name_ascending)
         table.sort(foreign_case, sort_name_ascending)
-        for i,case in ipairs(utils.merge_array(foreign_case, local_case)) do
+        for _,case in ipairs(utils.merge_array(foreign_case, local_case)) do
             table.insert(
                 res,
                 (string.format(
