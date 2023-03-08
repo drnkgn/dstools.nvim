@@ -12,6 +12,25 @@ M.create_commands = function()
         )
     end, { nargs = "?" })
 
+    vim.api.nvim_create_user_command("DSAddLegislation", function()
+        local legis_name = vim.fn.input("Name: ")
+        local legis_code = vim.fn.input("Code: ")
+        local legis_section = vim.fn.input("Section: ")
+        local legis_rule = vim.fn.input("Rule: ")
+        local legis_include = false
+
+        local opt = vim.fn.input("Include? (ENTER/n): ")
+        if opt == "" then
+            legis_include = true
+        end
+        dstools.add_legislation(
+            legis_name,
+            legis_code,
+            legis_section,
+            legis_rule,
+            legis_include)
+    end, {})
+
     vim.api.nvim_create_user_command("DSAddCase", function()
         local parsed_case = dstools.parse_case(
             utils.get_visual_selection().content
@@ -25,7 +44,6 @@ M.create_commands = function()
         end
 
         local opt = vim.fn.input("Include? (ENTER/n): ")
-        print(opt)
         if opt == "" then
             case_include = true
         end

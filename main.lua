@@ -111,6 +111,18 @@ M.add_case = function(name, citations, islocal, include)
     vim.b.ds_cache = temp
 end
 
+M.add_legislation = function(name, code, section, rule, include)
+    local temp = vim.b.ds_cache or {}
+    table.insert(temp.legislations, {
+        name = name,
+        code = code,
+        section = section,
+        rule = rule,
+        include = include,
+    })
+    vim.b.ds_cache = temp
+end
+
 M.link_case = function(case)
     local res = utils.add_tag(case.name, "i")
 
