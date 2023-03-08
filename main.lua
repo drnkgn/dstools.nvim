@@ -125,7 +125,7 @@ M.link_case = function(case)
             res = res .. "; "
             if vim.tbl_contains(
                 M.case_type.include,
-                case.citations[idx]
+                case.citations[idx].type
             ) then
                 res = res .. utils.add_tag(
                     make_citation(case.citations[idx]),
