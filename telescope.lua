@@ -5,6 +5,9 @@ local entry_display = require("telescope.pickers.entry_display")
 local finders = require("telescope.finders")
 local conf = require("telescope.config").values
 
+local dstools = require("DSTools.main")
+local utils = require("DSTools.utils")
+
 local M = {}
 
 M.search_case = function(opts)
@@ -43,7 +46,16 @@ M.search_case = function(opts)
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
-                -- TODO: link case
+                local visual_select = utils.get_visual_selection()
+                -- CHORE: probably shouldn't replace everything
+                vim.api.nvim_buf_set_text(
+                    0,
+                    visual_select.start_pos[2] - 1,
+                    visual_select.start_pos[3] - 1,
+                    visual_select.end_pos[2] - 1,
+                    visual_select.end_pos[3],
+                    { dstools.link_case(selection.value) }
+                )
             end)
             return true
         end,

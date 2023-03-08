@@ -46,6 +46,23 @@ M.load_cache = function(path)
     return nil
 end
 
+M.add_tag = function(content, tag, attribute)
+    -- TODO: support multiple attributes?
+    attribute = attribute
+    if attribute then
+        attribute = " " .. attribute
+    else
+        attribute = ""
+    end
+    return string.format(
+        "<%s%s>%s</%s>",
+        tag,
+        attribute,
+        content,
+        tag
+    )
+end
+
 M.get_visual_selection = function()
     local start_pos = vim.fn.getpos("'<")
     local end_pos = vim.fn.getpos("'>")

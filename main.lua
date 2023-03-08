@@ -2,6 +2,50 @@ local utils = require("DSTools.utils")
 
 local M = {}
 
+local make_citation = function(citation)
+    local vol = citation.vol or ""
+    if citation.vol then
+        vol = vol .. " "
+    end
+    return string.format(
+        "[%s] %s%s %s",
+        citation.year,
+        vol,
+        citation.type,
+        citation.page
+    )
+end
+
+local case_tag_attribute = function(citation)
+    local vol = citation.vol or ""
+    if citation.vol then
+        vol = vol .. "_"
+    end
+    return string.format(
+        "HREF=\"case_notes/showcase.aspx?pageid=%s_%s%s_%s;\"",
+        citation.type,
+        vol,
+        citation.year,
+        citation.page
+    )
+end
+
+M.case_type = {
+    include = {
+        "SSLR",
+        "MELR",
+        "MELRU",
+        "MLRA",
+        "MLRAU",
+        "MLRH",
+        "MLRHU",
+    },
+    exclude = {
+        "LNS",
+        "MLJU",
+    },
+}
+
 M.parse_citation = function(str)
     local parsed_citation = {
         year = nil,
@@ -44,6 +88,7 @@ M.parse_case = function(str)
         if string.match(chars[idx], "%[") then
             table.insert(
                 parsed_case.citations,
+                1,
                 table.concat(vim.list_slice(chars, idx, end_idx))
             )
             end_idx = idx - 1
@@ -64,6 +109,44 @@ M.add_case = function(name, citations, islocal, include)
         islocal = islocal,
     })
     vim.b.ds_cache = temp
+end
+
+M.link_case = function(case)
+    local res = utils.add_tag(case.name, "i")
+
+    if case.islocal then
+        res = res .. " " .. make_citation(case.citations[1])
+        res = utils.add_tag(
+            res,
+            "LINK",
+            case_tag_attribute(case.citations[1])
+        )
+        for idx = 2,#case.citations do
+            res = res .. "; "
+            if vim.tbl_contains(
+                M.case_type.include,
+                case.citations[idx]
+            ) then
+                res = res .. utils.add_tag(
+                    make_citation(case.citations[idx]),
+                    "LINK",
+                    case_tag_attribute(case.citations[idx])
+                )
+            elseif not vim.tbl_contains(
+                M.case_type.exclude,
+                case.citations[idx]
+            ) then
+                res = res .. make_citation(case.citations[idx])
+            end
+        end
+    else
+        res = res .. " " .. case.citations[1]
+        for idx = 2,#case.citations do
+            res = res .. "; " .. case.citations[idx]
+        end
+    end
+
+    return res
 end
 
 return M

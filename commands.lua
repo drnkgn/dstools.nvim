@@ -67,7 +67,7 @@ M.create_commands = function()
     vim.api.nvim_create_user_command(
         "DSSearchCases",
         telescope.search_case,
-        {}
+        { range = "%" }
     )
 end
 
