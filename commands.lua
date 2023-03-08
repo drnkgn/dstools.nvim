@@ -69,6 +69,41 @@ M.create_commands = function()
         telescope.search_case,
         { range = "%" }
     )
+
+    vim.api.nvim_create_user_command("DSGenCaseList", function()
+        -- CHORE: very unoptimized solution, restructure table may improve
+        -- performance (if needed)
+        local local_case = {}
+        local foreign_case = {}
+        local res = {}
+        local sort_name_ascending = function(a, b)
+            return a.name < b.name
+        end
+        for _,case in ipairs(vim.b.ds_cache.cases) do
+            if case.include then
+                if case.islocal then
+                    local_case[#local_case+1] = case
+                else
+                    foreign_case[#foreign_case+1] = case
+                end
+            end
+        end
+        table.sort(local_case, sort_name_ascending)
+        table.sort(foreign_case, sort_name_ascending)
+        for i,case in ipairs(utils.merge_array(foreign_case, local_case)) do
+            table.insert(
+                res,
+                (string.format(
+                    "<p><i>%s (refd)</i></p>",
+                    string.gsub(dstools.link_case(case), "<%/?i>", "")
+                ))
+            )
+            -- insert newlines in between
+            table.insert(res, "")
+        end
+
+        vim.api.nvim_put(res, "l", false, false)
+    end, {})
 end
 
 return M

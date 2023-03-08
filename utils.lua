@@ -22,6 +22,14 @@ M.str2chars = function(str)
     return t
 end
 
+M.merge_array = function(arr1, arr2)
+    -- TODO: probably should support more than two arrays
+    for _,e in ipairs(arr2) do
+        arr1[#arr1+1] = e
+    end
+    return arr1
+end
+
 M.store_cache = function(path)
     local file = io.open(path, "w")
     if file then
