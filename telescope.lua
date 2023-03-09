@@ -107,6 +107,16 @@ M.search_legislation = function(opts)
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
                 local visual_select = utils.get_visual_selection()
+                vim.api.nvim_buf_set_text(
+                    0,
+                    visual_select.start_pos[2] - 1,
+                    visual_select.start_pos[3] - 1,
+                    visual_select.end_pos[2] - 1,
+                    visual_select.end_pos[3],
+                    { dstools.link_legislation(
+                        selection.value, visual_select.content
+                    ) }
+                )
             end)
             return true
         end,

@@ -30,6 +30,36 @@ local case_tag_attribute = function(citation)
     )
 end
 
+local legislation_tag_attribute = function(legislation)
+    -- CHORE: unreadable, but meh
+    local link = ""
+    local code = legislation.code
+    local section = ""
+    local rule = ""
+    if legislation.section then
+        link = "legislationSectionDisplayed.aspx?"
+
+        code = code .. ";"
+
+        if legislation.rule then
+            rule = "SN" .. legislation.rule .. "."
+            section = (legislation.section and legislation.section .. ";") or ""
+        else
+            section = legislation.section .. "."
+        end
+    else
+        link = "legislationMainDisplayed.aspx?"
+    end
+
+    return string.format(
+        "HREF=\"%s%s%s%s;;\"",
+        link,
+        code,
+        section,
+        rule
+    )
+end
+
 M.case_type = {
     include = {
         "SSLR",
@@ -159,6 +189,15 @@ M.link_case = function(case)
     end
 
     return res
+end
+
+M.link_legislation = function(legislation, content)
+    content = content or legislation.name
+    return utils.add_tag(
+        content,
+        "LINK",
+        legislation_tag_attribute(legislation)
+    )
 end
 
 return M
