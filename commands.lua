@@ -89,6 +89,12 @@ M.create_commands = function()
         { range = "%" }
     )
 
+    vim.api.nvim_create_user_command(
+        "DSSearchLegislations",
+        telescope.search_legislation,
+        { range = "%" }
+    )
+
     vim.api.nvim_create_user_command("DSGenCaseList", function()
         -- CHORE: very unoptimized solution, restructure table may improve
         -- performance (if needed)
