@@ -19,6 +19,13 @@ M.create_commands = function()
         local legis_rule = vim.fn.input("Rule: ")
         local legis_include = false
 
+        if legis_section == "" then
+            legis_section = nil
+        end
+        if legis_rule == "" then
+            legis_rule = nil
+        end
+
         local opt = vim.fn.input("Include? (ENTER/n): ")
         if opt == "" then
             legis_include = true

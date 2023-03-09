@@ -74,13 +74,15 @@ M.search_legislation = function(opts)
     })
     local make_display = function(entry)
         local tick_box = "☐"
+        local section = entry.value.section or ""
+        local rule = entry.value.rule or ""
         if entry.value.include then
             tick_box = "☒"
         end
         return displayer({
             tick_box,
-            entry.value.section,
-            entry.value.rule,
+            section,
+            rule,
             entry.value.name,
         })
     end
