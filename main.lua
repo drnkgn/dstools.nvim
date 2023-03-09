@@ -22,10 +22,10 @@ local case_tag_attribute = function(citation)
         vol = vol .. "_"
     end
     return string.format(
-        "HREF=\"case_notes/showcase.aspx?pageid=%s_%s%s_%s;\"",
+        "HREF=\"case_notes/showcase.aspx?pageid=%s_%s_%s%s;\"",
         citation.type,
-        vol,
         citation.year,
+        vol,
         citation.page
     )
 end
