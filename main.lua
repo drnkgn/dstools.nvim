@@ -2,7 +2,7 @@ local utils = require("DSTools.utils")
 
 local M = {}
 
-local make_citation = function(citation)
+local function make_citation(citation)
     local vol = citation.vol or ""
     if citation.vol then
         vol = vol .. " "
@@ -16,7 +16,7 @@ local make_citation = function(citation)
     )
 end
 
-local case_tag_attribute = function(citation)
+local function case_tag_attribute(citation)
     local vol = citation.vol or ""
     if citation.vol then
         vol = vol .. "_"
@@ -30,7 +30,7 @@ local case_tag_attribute = function(citation)
     )
 end
 
-local legislation_tag_attribute = function(legislation)
+local function legislation_tag_attribute(legislation)
     -- CHORE: unreadable, but meh
     local link = ""
     local code = legislation.code
@@ -76,7 +76,7 @@ M.case_type = {
     },
 }
 
-M.parse_citation = function(str)
+function M.parse_citation(str)
     local parsed_citation = {
         year = nil,
         vol = nil,
@@ -104,7 +104,7 @@ M.parse_citation = function(str)
     return parsed_citation
 end
 
-M.parse_case = function(str)
+function M.parse_case(str)
     local parsed_case = {
         name = "",
         citations = {},
@@ -130,7 +130,7 @@ M.parse_case = function(str)
     return parsed_case
 end
 
-M.add_case = function(name, citations, islocal, include)
+function M.add_case(name, citations, islocal, include)
     local temp = vim.b.ds_cache or {}
     table.insert(temp.cases, {
         name = name,
@@ -141,7 +141,7 @@ M.add_case = function(name, citations, islocal, include)
     vim.b.ds_cache = temp
 end
 
-M.add_legislation = function(name, code, section, rule, include)
+function M.add_legislation(name, code, section, rule, include)
     local temp = vim.b.ds_cache or {}
     table.insert(temp.legislations, {
         name = name,
@@ -153,7 +153,7 @@ M.add_legislation = function(name, code, section, rule, include)
     vim.b.ds_cache = temp
 end
 
-M.link_case = function(case)
+function M.link_case(case)
     local res = utils.add_tag(case.name, "i")
 
     if case.islocal then
@@ -191,7 +191,7 @@ M.link_case = function(case)
     return res
 end
 
-M.link_legislation = function(legislation, content)
+function M.link_legislation(legislation, content)
     content = content or legislation.name
     return utils.add_tag(
         content,

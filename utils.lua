@@ -2,7 +2,7 @@ local json = require("DSTools.json")
 
 local M = {}
 
-M.generate_default_filename = function()
+function M.generate_default_filename()
     -- TODO: probably a good idea to support relative path as well
     return string.format(
         "TEMP_%s",
@@ -14,7 +14,7 @@ M.generate_default_filename = function()
     )
 end
 
-M.str2chars = function(str)
+function M.str2chars(str)
     local t = {}
     for c in str:gmatch(".") do
         t[#t+1] = c
@@ -22,7 +22,7 @@ M.str2chars = function(str)
     return t
 end
 
-M.merge_array = function(arr1, arr2)
+function M.merge_array(arr1, arr2)
     -- TODO: probably should support more than two arrays
     for _,e in ipairs(arr2) do
         arr1[#arr1+1] = e
@@ -30,7 +30,7 @@ M.merge_array = function(arr1, arr2)
     return arr1
 end
 
-M.store_cache = function(path)
+function M.store_cache(path)
     local file = io.open(path, "w")
     if file then
         file:write(json.encode(vim.b.ds_cache or {
@@ -41,7 +41,7 @@ M.store_cache = function(path)
     end
 end
 
-M.load_cache = function(path)
+function M.load_cache(path)
     local lines = {}
     local file = io.open(path, "r")
     if file then
@@ -54,7 +54,7 @@ M.load_cache = function(path)
     return nil
 end
 
-M.add_tag = function(content, tag, attribute)
+function M.add_tag(content, tag, attribute)
     -- TODO: support multiple attributes?
     attribute = attribute
     if attribute then
@@ -71,7 +71,7 @@ M.add_tag = function(content, tag, attribute)
     )
 end
 
-M.get_visual_selection = function()
+function M.get_visual_selection()
     local start_pos = vim.fn.getpos("'<")
     local end_pos = vim.fn.getpos("'>")
     local n_lines = math.abs(end_pos[2] - start_pos[2]) + 1

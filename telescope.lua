@@ -10,7 +10,7 @@ local utils = require("DSTools.utils")
 
 local M = {}
 
-M.search_case = function(opts)
+function M.search_case(opts)
     local displayer = entry_display.create({
         separator = "",
         items = {
@@ -62,7 +62,7 @@ M.search_case = function(opts)
     }):find()
 end
 
-M.search_legislation = function(opts)
+function M.search_legislation(opts)
     local displayer = entry_display.create({
         separator = "",
         items = {
