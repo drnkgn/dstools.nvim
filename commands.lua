@@ -12,6 +12,15 @@ M.create_commands = function()
         )
     end, { nargs = "?" })
 
+    vim.api.nvim_create_user_command("DSReload", function()
+        vim.b.ds_cache = utils.load_cache(
+            utils.generate_default_filename()
+        ) or {
+            legislations = {},
+            cases = {},
+        }
+    end, {})
+
     vim.api.nvim_create_user_command("DSAddLegislation", function()
         local legis_name = vim.fn.input("Name: ")
         local legis_code = vim.fn.input("Code: ")
