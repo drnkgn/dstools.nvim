@@ -37,7 +37,7 @@ local function legislation_tag_attribute(legislation)
     local section = ""
     local rule = ""
     if legislation.section then
-        link = "legislationSectionDisplayed.aspx?"
+        link = "legislationSectiondisplayed.aspx?"
 
         code = code .. ";"
 
