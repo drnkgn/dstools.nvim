@@ -114,24 +114,22 @@ M.create_commands = function()
     vim.api.nvim_create_user_command("DSGenCaseList", function()
         -- CHORE: very unoptimized solution, restructure table may improve
         -- performance (if needed)
-        local local_case = {}
-        local foreign_case = {}
+        local cases = {}
+        -- local local_case = {}
+        -- local foreign_case = {}
         local res = {}
         local sort_name_ascending = function(a, b)
             return a.name < b.name
         end
         for _,case in ipairs(vim.b.ds_cache.cases) do
             if case.include then
-                if case.islocal then
-                    local_case[#local_case+1] = case
-                else
-                    foreign_case[#foreign_case+1] = case
-                end
+                cases[#cases+1] = case
             end
         end
-        table.sort(local_case, sort_name_ascending)
-        table.sort(foreign_case, sort_name_ascending)
-        for _,case in ipairs(utils.merge_array(foreign_case, local_case)) do
+        -- table.sort(local_case, sort_name_ascending)
+        -- table.sort(foreign_case, sort_name_ascending)
+        table.sort(cases, sort_name_ascending)
+        for _,case in ipairs(cases) do
             table.insert(
                 res,
                 (string.format(
