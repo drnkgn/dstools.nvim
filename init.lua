@@ -1,10 +1,10 @@
-local utils = require("DSTools.utils")
+local util = require("DSTools.util")
 
 local M = {}
 
 function M.setup()
-    vim.b.ds_cache = utils.load_cache(
-        utils.generate_default_filename()
+    vim.b.ds_cache = util.load_cache(
+        util.generate_default_filename()
     ) or {
         legislations = {},
         cases = {},
