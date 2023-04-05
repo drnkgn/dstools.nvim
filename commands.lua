@@ -1,20 +1,21 @@
-local dstools = require("DSTools.main")
+local case = require("DSTools.case")
+local legislation = require("DSTools.legislation")
+local util = require("DSTools.util")
 local telescope = require("DSTools.telescope")
-local utils = require("DSTools.utils")
 
 local M = {}
 
 M.create_commands = function()
     vim.api.nvim_create_user_command("DSStoreCache", function(opts)
-        utils.store_cache(
-            (opts.args == "" and utils.generate_default_filename())
+        util.store_cache(
+            (opts.args == "" and util.generate_default_filename())
                 or opts.args
         )
     end, { nargs = "?" })
 
     vim.api.nvim_create_user_command("DSReload", function()
-        vim.b.ds_cache = utils.load_cache(
-            utils.generate_default_filename()
+        vim.b.ds_cache = util.load_cache(
+            util.generate_default_filename()
         ) or {
             legislations = {},
             cases = {},
@@ -22,81 +23,75 @@ M.create_commands = function()
     end, {})
 
     vim.api.nvim_create_user_command("DSAddLegislation", function()
-        local legis_name = vim.fn.input("Name: ")
-        local legis_code = vim.fn.input("Code: ")
-        local legis_section = vim.fn.input("Section: ")
-        local legis_rule = vim.fn.input("Rule: ")
-        local legis_include = false
+        local name = vim.fn.input("Name: ")
+        local code = vim.fn.input("Code: ")
+        local section = vim.fn.input("Section: ")
+        local rule = vim.fn.input("Rule: ")
+        local include = false
 
-        if legis_section == "" then
-            legis_section = nil
-        end
-        if legis_rule == "" then
-            legis_rule = nil
-        end
+        -- set redundant variables to nil
+        -- required due to how linking was implemented
+        if section == "" then section = nil end
+        if rule == "" then rule = nil end
 
-        local opt = vim.fn.input("Include? (ENTER/n): ")
-        if opt == "" then
-            legis_include = true
+        local input = vim.fn.input("Include? (ENTER/n): ")
+        if input == "" then
+            include = true
         end
-        dstools.add_legislation(
-            legis_name,
-            legis_code,
-            legis_section,
-            legis_rule,
-            legis_include)
+        legislation.add(
+            name,
+            code,
+            section,
+            rule,
+            include)
     end, {})
 
     vim.api.nvim_create_user_command("DSAddCase", function()
-        local parsed_case = dstools.parse_case(
-            utils.get_visual_selection().content
+        local parsed = case.parse(
+            util.get_visual_selection().content
         )
-        local case_name = parsed_case.name
-        local case_citations = {}
-        local case_include = false
-        local case_local = false
-        for _,citation in ipairs(parsed_case.citations) do
-            table.insert(case_citations, dstools.parse_citation(citation))
+        local name = parsed.name
+        local citations = {}
+        local include = false
+        local islocal = false
+        for i,v in ipairs(parsed.citations) do
+            citations[#citations+1] = citation.parse(v)
         end
 
-        local opt = vim.fn.input("Include? (ENTER/n): ")
-        if opt == "" then
-            case_include = true
+        local input = vim.fn.input("Include? (ENTER/n): ")
+        if input == "" then
+            include = true
         end
-        opt = vim.fn.input("Local? (ENTER/n): ")
-        if opt == "" then
-            case_local = true
+        input = vim.fn.input("Local? (ENTER/n): ")
+        if input == "" then
+            islocal = true
         end
-        dstools.add_case(case_name, case_citations, case_local, case_include)
+        case.add(name, citations, islocal, include)
     end, { range = "%" })
 
     vim.api.nvim_create_user_command("DSAddCaseManual", function()
-        local case_name = vim.fn.input("Case name: ")
-        local case_citations = {}
-        local case_include = false
-        local case_local = false
-        local citation = ""
+        local name = vim.fn.input("Case name: ")
+        local citations = {}
+        local include = false
+        local islocal = false
+
+        local input = ""
         local idx = 1
         while true do
-            citation = vim.fn.input(string.format(
-                "Citation %d: ",
-                idx
-            ))
-            if citation == "" then
-                break
-            end
-            case_citations[#case_citations+1] = citation
+            input = vim.fn.input(string.format("Citation %d: ", idx))
+            if input == "" then break end
+            citations[#citations+1] = input
             idx = idx + 1
         end
-        local opt = vim.fn.input("Include? (ENTER/n): ")
-        if opt == "" then
-            case_include = true
+        input = vim.fn.input("Include? (ENTER/n): ")
+        if input == "" then
+            include = true
         end
-        opt = vim.fn.input("Local? (ENTER/n): ")
-        if opt == "" then
-            case_local = true
+        input = vim.fn.input("Local? (ENTER/n): ")
+        if input == "" then
+            islocal = true
         end
-        dstools.add_case(case_name, case_citations, case_local, case_include)
+        case.add(name, citations, islocal, include)
     end, {})
 
     vim.api.nvim_create_user_command(
@@ -112,32 +107,25 @@ M.create_commands = function()
     )
 
     vim.api.nvim_create_user_command("DSGenCaseList", function()
-        -- CHORE: very unoptimized solution, restructure table may improve
-        -- performance (if needed)
         local cases = {}
-        -- local local_case = {}
-        -- local foreign_case = {}
         local res = {}
         local sort_name_ascending = function(a, b)
             return a.name < b.name
         end
-        for _,case in ipairs(vim.b.ds_cache.cases) do
-            if case.include then
-                cases[#cases+1] = case
+        for i,v in ipairs(vim.b.ds_cache.cases) do
+            if v.include then
+                cases[#cases+1] = v
             end
         end
-        -- table.sort(local_case, sort_name_ascending)
-        -- table.sort(foreign_case, sort_name_ascending)
         table.sort(cases, sort_name_ascending)
-        for _,case in ipairs(cases) do
+        for i,v in ipairs(cases) do
             table.insert(
                 res,
                 (string.format(
                     "<p><i>%s (refd)</i></p>",
-                    string.gsub(dstools.link_case(case), "<%/?i>", "")
+                    string.gsub(case.link(v), "<%/?i>", "")
                 ))
             )
-            -- insert newlines in between
             table.insert(res, "")
         end
 

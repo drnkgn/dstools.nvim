@@ -5,8 +5,9 @@ local entry_display = require("telescope.pickers.entry_display")
 local finders = require("telescope.finders")
 local conf = require("telescope.config").values
 
-local dstools = require("DSTools.main")
-local utils = require("DSTools.utils")
+local case = require("DSTools.case")
+local legislation = require("DSTools.legislation")
+local util = require("DSTools.util")
 
 local M = {}
 
@@ -46,7 +47,7 @@ function M.search_case(opts)
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
-                local visual_select = utils.get_visual_selection()
+                local visual_select = util.get_visual_selection()
                 -- CHORE: probably shouldn't replace everything
                 vim.api.nvim_buf_set_text(
                     0,
@@ -54,7 +55,7 @@ function M.search_case(opts)
                     visual_select.start_pos[3] - 1,
                     visual_select.end_pos[2] - 1,
                     visual_select.end_pos[3],
-                    { dstools.link_case(selection.value) }
+                    { case.link(selection.value) }
                 )
             end)
             return true
@@ -88,7 +89,7 @@ function M.search_legislation(opts)
     end
     opts = opts or {}
     pickers.new(opts, {
-        prompt_title = "Cases",
+        prompt_title = "Legislations",
         finder = finders.new_table {
             results = vim.b.ds_cache.legislations,
             entry_maker = function(entry)
@@ -106,16 +107,14 @@ function M.search_legislation(opts)
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
-                local visual_select = utils.get_visual_selection()
+                local visual_select = util.get_visual_selection()
                 vim.api.nvim_buf_set_text(
                     0,
                     visual_select.start_pos[2] - 1,
                     visual_select.start_pos[3] - 1,
                     visual_select.end_pos[2] - 1,
                     visual_select.end_pos[3],
-                    { dstools.link_legislation(
-                        selection.value, visual_select.content
-                    ) }
+                    {legislation.link(selection.value, visual_select.content)}
                 )
             end)
             return true
