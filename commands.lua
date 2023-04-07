@@ -1,4 +1,5 @@
 local case = require("DSTools.case")
+local citation = require("DSTools.citation")
 local legislation = require("DSTools.legislation")
 local util = require("DSTools.util")
 local telescope = require("DSTools.telescope")
@@ -50,13 +51,8 @@ M.create_commands = function()
         local parsed = case.parse(
             util.get_visual_selection().content
         )
-        local name = parsed.name
-        local citations = {}
         local include = false
         local islocal = false
-        for i,v in ipairs(parsed.citations) do
-            citations[#citations+1] = citation.parse(v)
-        end
 
         local input = vim.fn.input("Include? (ENTER/n): ")
         if input == "" then
@@ -66,7 +62,7 @@ M.create_commands = function()
         if input == "" then
             islocal = true
         end
-        case.add(name, citations, islocal, include)
+        case.add(parsed.name, parsed.citations, islocal, include)
     end, { range = "%" })
 
     vim.api.nvim_create_user_command("DSAddCaseManual", function()
@@ -86,10 +82,6 @@ M.create_commands = function()
         input = vim.fn.input("Include? (ENTER/n): ")
         if input == "" then
             include = true
-        end
-        input = vim.fn.input("Local? (ENTER/n): ")
-        if input == "" then
-            islocal = true
         end
         case.add(name, citations, islocal, include)
     end, {})
