@@ -69,10 +69,18 @@ function M.link(case, content)
             citation.construct(case.citations[1])
         )}
         for idx = 2,#case.citations do
-            res[#res+1] = string.format(
-                "; %s",
-                citation.construct(case.citations[idx])
-            )
+            if vim.tbl_contains(M.types.include, case.citations[idx].type) then
+                res[#res+1] = string.format(
+                    "; <LINK HREF=\"case_notes/showcase.aspx?pageid=%s;\">%s</LINK>",
+                    citation.pageid(case.citations[idx]),
+                    citation.construct(case.citations[idx])
+                )
+            else
+                res[#res+1] = string.format(
+                    "; %s",
+                    citation.construct(case.citations[idx])
+                )
+            end
         end
     else
         res = { string.format("<i>%s</i> %s", content, case.citations[1]) }
