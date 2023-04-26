@@ -1,5 +1,5 @@
-local citation = require("DSTools.citation")
-local util = require("DSTools.util")
+local citation = require("dstools.citation")
+local util = require("dstools.util")
 
 local M = {}
 

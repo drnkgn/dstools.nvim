@@ -5,9 +5,9 @@ local entry_display = require("telescope.pickers.entry_display")
 local finders = require("telescope.finders")
 local conf = require("telescope.config").values
 
-local case = require("DSTools.case")
-local legislation = require("DSTools.legislation")
-local util = require("DSTools.util")
+local case = require("dstools.case")
+local legislation = require("dstools.legislation")
+local util = require("dstools.util")
 
 local M = {}
 

@@ -1,4 +1,4 @@
-local util = require("DSTools.util")
+local util = require("dstools.util")
 
 local M = {}
 
@@ -9,7 +9,7 @@ function M.setup()
         legislations = {},
         cases = {},
     }
-    require("DSTools.commands").create_commands()
+    require("dstools.commands").create_commands()
 end
 
 return M

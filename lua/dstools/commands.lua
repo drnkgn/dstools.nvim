@@ -1,8 +1,8 @@
-local case = require("DSTools.case")
-local citation = require("DSTools.citation")
-local legislation = require("DSTools.legislation")
-local util = require("DSTools.util")
-local telescope = require("DSTools.telescope")
+local case = require("dstools.case")
+local citation = require("dstools.citation")
+local legislation = require("dstools.legislation")
+local util = require("dstools.util")
+local telescope = require("dstools.telescope")
 
 local M = {}
 

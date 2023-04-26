@@ -1,6 +1,15 @@
-local json = require("DSTools.json")
+local json = require("dstools.dependencies.json")
 
 local M = {}
+
+function M.file_exists(path)
+    local file = io.open(path, "r")
+    if file then
+        io.close(file)
+        return true
+    end
+    return false
+end
 
 function M.generate_default_filename()
     -- TODO: probably a good idea to support relative path as well
