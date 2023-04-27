@@ -1,3 +1,4 @@
+local cache = require("dstools.cache")
 local citation = require("dstools.citation")
 local util = require("dstools.util")
 
@@ -47,52 +48,60 @@ function M.parse(str)
 end
 
 function M.add(name, citations, islocal, include)
-    local temp = vim.b.ds_cache or {}
+    local temp = cache.get_cache()
     table.insert(temp.cases, {
         name = name,
         citations = citations,
         include = include,
         islocal = islocal,
     })
-    vim.b.ds_cache = temp
+    cache.set_cache(temp)
 end
 
-function M.link(case, content)
-    content = content or case.name
+function M.link(data, content)
+    content = content or data.name
 
     local res = ""
-    if case.islocal then
+    if data.islocal then
         res = {string.format(
             "<LINK HREF=\"case_notes/showcase.aspx?pageid=%s;\"><i>%s</i> %s</LINK>",
-            citation.pageid(case.citations[1]),
+            citation.pageid(data.citations[1]),
             content,
-            citation.construct(case.citations[1])
+            citation.construct(data.citations[1])
         )}
-        for idx = 2,#case.citations do
-            if vim.tbl_contains(M.types.include, case.citations[idx].type) then
+        for idx = 2,#data.citations do
+            if vim.tbl_contains(M.types.include, data.citations[idx].type) then
                 res[#res+1] = string.format(
                     "; <LINK HREF=\"case_notes/showcase.aspx?pageid=%s;\">%s</LINK>",
-                    citation.pageid(case.citations[idx]),
-                    citation.construct(case.citations[idx])
+                    citation.pageid(data.citations[idx]),
+                    citation.construct(data.citations[idx])
                 )
             else
                 res[#res+1] = string.format(
                     "; %s",
-                    citation.construct(case.citations[idx])
+                    citation.construct(data.citations[idx])
                 )
             end
         end
     else
-        res = { string.format("<i>%s</i> %s", content, case.citations[1]) }
-        for idx = 2,#case.citations do
+        res = { string.format("<i>%s</i> %s", content, data.citations[1]) }
+        for idx = 2,#data.citations do
             res[#res+1] = string.format(
                 "; %s",
-                case.citations[idx]
+                data.citations[idx]
             )
         end
     end
 
     return table.concat(res)
+end
+
+---@param left table: left operand
+---@param right table: right operand
+function M.equal(left, right)
+    if left.name ~= right.name then return false end
+
+    return true
 end
 
 return M

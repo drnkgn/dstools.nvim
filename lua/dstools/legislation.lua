@@ -1,7 +1,9 @@
+local cache = require("dstools.cache")
+
 local M = {}
 
 function M.add(name, code, section, rule, include)
-    local temp = vim.b.ds_cache or {}
+    local temp = cache.get_cache()
     table.insert(temp.legislations, {
         name = name,
         code = code,
@@ -9,26 +11,26 @@ function M.add(name, code, section, rule, include)
         rule = rule,
         include = include,
     })
-    vim.b.ds_cache = temp
+    cache.set_cache(temp)
 end
 
-function M.link(legislation, content)
-    content = content or legislation.name
+function M.link(data, content)
+    content = content or data.name
 
     local link = ""
-    local code = legislation.code
+    local code = data.code
     local section = ""
     local rule = ""
-    if legislation.section then
+    if data.section then
         link = "legislationSectiondisplayed.aspx?"
 
         code = code .. ";"
 
-        if legislation.rule then
+        if data.rule then
             rule = "SN" .. legislation.rule .. "."
-            section = (legislation.section and legislation.section .. ";") or ""
+            section = (data.section and data.section .. ";") or ""
         else
-            section = legislation.section .. "."
+            section = data.section .. "."
         end
     else
         link = "legislationMainDisplayed.aspx?"
@@ -42,6 +44,17 @@ function M.link(legislation, content)
         rule,
         content
     )
+end
+
+---@param left table: left operand
+---@param right table: right operand
+function M.equal(left, right)
+    if left.name ~= right.name then return false end
+    if left.code ~= right.code then return false end
+    if left.section ~= right.section then return false end
+    if left.rule ~= right.rule then return false end
+
+    return true
 end
 
 return M

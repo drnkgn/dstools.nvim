@@ -1,6 +1,8 @@
-local json = require("dstools.dependencies.json")
-
 local M = {}
+
+function M.get_bufnr()
+    return vim.g.dsbufnr
+end
 
 function M.file_exists(path)
     local file = io.open(path, "r")
@@ -29,28 +31,6 @@ function M.str2chars(str)
         t[#t+1] = c
     end
     return t
-end
-
-function M.store_cache(path)
-    local file = io.open(path, "w")
-    if file then
-        file:write(json.encode(vim.b.ds_cache or {
-            legislation = {},
-            cases = {},
-        }))
-        io.close(file)
-    end
-end
-
-function M.load_cache(path)
-    local lines = {}
-    local file = io.open(path, "r")
-    if file then
-        data = file:read("*all")
-        io.close(file)
-        return json.decode(data)
-    end
-    return nil
 end
 
 function M.get_visual_selection()

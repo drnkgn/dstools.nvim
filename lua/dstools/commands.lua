@@ -1,3 +1,4 @@
+local cache = require("dstools.cache")
 local case = require("dstools.case")
 local citation = require("dstools.citation")
 local legislation = require("dstools.legislation")
@@ -8,19 +9,14 @@ local M = {}
 
 M.create_commands = function()
     vim.api.nvim_create_user_command("DSStoreCache", function(opts)
-        util.store_cache(
+        cache.store_cache(
             (opts.args == "" and util.generate_default_filename())
                 or opts.args
         )
     end, { nargs = "?" })
 
     vim.api.nvim_create_user_command("DSReload", function()
-        vim.b.ds_cache = util.load_cache(
-            util.generate_default_filename()
-        ) or {
-            legislations = {},
-            cases = {},
-        }
+        cache.set_cache(cache.load_cache(util.generate_default_filename()))
     end, {})
 
     vim.api.nvim_create_user_command("DSAddLegislation", function()
@@ -104,7 +100,7 @@ M.create_commands = function()
         local sort_name_ascending = function(a, b)
             return a.name < b.name
         end
-        for i,v in ipairs(vim.b.ds_cache.cases) do
+        for i,v in ipairs(cache.get_cache().cases) do
             if v.include then
                 cases[#cases+1] = v
             end
