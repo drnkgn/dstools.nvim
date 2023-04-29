@@ -1,7 +1,5 @@
 local M = {}
 
-function M.get_bufnr()
-    return vim.g.dsbufnr
 end
 
 function M.file_exists(path)
