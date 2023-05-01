@@ -1,27 +1,10 @@
-local cache = require("dstools.cache")
+local source = require("dstools.source")
 local citation = require("dstools.citation")
 local util = require("dstools.util")
 
 local M = {}
 M.__index = M
 
-M.types = {
-    include = {
-        "SSLR",
-        "MELR",
-        "MELRU",
-        "MLRA",
-        "MLRAU",
-        "MLRH",
-        "MLRHU",
-    },
-    exclude = {
-        "LNS",
-        "MLJU",
-        "AMCR",
-        "AMEJ",
-    },
-}
 function M.__eq(a, b)
     if a.name ~= b.name then return false end
 
