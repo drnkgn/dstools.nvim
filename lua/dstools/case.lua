@@ -32,6 +32,8 @@ function M.new(name, citations, islocal, include)
     local instance = setmetatable({}, M)
     instance.name      = name or ""
     instance.citations = citations or {}
+    instance.islocal   = util.ifnil(islocal, true)
+    instance.include   = util.ifnil(include, true)
     return instance
 end
 
@@ -57,6 +59,8 @@ end
 function M:update(name, citations, islocal, include)
     self.name      = name or self.name
     self.citations = citations or self.citations
+    self.islocal   = util.ifnil(islocal, self.islocal)
+    self.include   = util.ifnil(include, self.include)
 end
 
 function M:link()

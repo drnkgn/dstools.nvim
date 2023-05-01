@@ -18,12 +18,16 @@ function M.new(name, code, section, rule, include)
     instance.code    = code or ""
     instance.section = section -- section can be nil
     instance.rule    = rule    -- rule can be nil
+    instance.include = util.ifnil(include, true)
     return instance
 end
 
 function M:update(name, code, section, rule, include)
     self.name    = name or self.name
     self.code    = code or self.code
+    self.section = util.iff(section == "", nil, section or self.section)
+    self.rule    = util.iff(rule == "", nil, rule or self.rule)
+    self.include = util.ifnil(include, self.include)
 end
 
 function M:link(content)

@@ -1,5 +1,30 @@
 local M = {}
 
+--- Workaround to `cond` and `b` or `c` when `b` can be false
+---@param cond boolean|function: expression that evaluates to bool or a function that returns the result of a condition
+---@param a any: return `a` if `cond` is true
+---@param b any: return `b` if `cond` is false
+function M.iff(cond, a, b)
+    if type(cond) ~= "function" then
+        local res = cond
+        cond = function() return res end
+    end
+    if cond() then
+        return a
+    else
+        return b
+    end
+end
+
+--- Workaround to `a` or `b` when `a` can be false
+---@param a any: return `a` if `a` is not nil
+---@param b any: else return `b`
+function M.ifnil(a, b)
+    if a == nil then
+        return b
+    else
+        return a
+    end
 end
 
 function M.file_exists(path)
