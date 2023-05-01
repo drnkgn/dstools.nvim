@@ -1,36 +1,46 @@
-local cache = require("dstools.cache")
+local util = require("dstools.util")
 
 local M = {}
+M.__index = M
 
-function M.add(name, code, section, rule, include)
-    local temp = cache.get_cache()
-    table.insert(temp.legislations, {
-        name = name,
-        code = code,
-        section = section,
-        rule = rule,
-        include = include,
-    })
-    cache.set_cache(temp)
+function M.__eq(a, b)
+    if a.name ~= b.name then return false end
+    if a.code ~= b.code then return false end
+    if a.section ~= b.section then return false end
+    if a.rule ~= b.rule then return false end
+
+    return true
 end
 
-function M.link(data, content)
-    content = content or data.name
+function M.new(name, code, section, rule, include)
+    local instance = setmetatable({}, M)
+    instance.name    = name or ""
+    instance.code    = code or ""
+    instance.section = section -- section can be nil
+    instance.rule    = rule    -- rule can be nil
+    return instance
+end
 
+function M:update(name, code, section, rule, include)
+    self.name    = name or self.name
+    self.code    = code or self.code
+end
+
+function M:link(content)
     local link = ""
-    local code = data.code
+    local code = self.code
     local section = ""
     local rule = ""
-    if data.section then
+    if self.section then
         link = "legislationSectiondisplayed.aspx?"
 
         code = code .. ";"
 
-        if data.rule then
-            rule = "SN" .. legislation.rule .. "."
-            section = (data.section and data.section .. ";") or ""
+        if self.rule then
+            rule = "SN" .. self.rule .. "."
+            section = (self.section and self.section .. ";") or ""
         else
-            section = data.section .. "."
+            section = self.section .. "."
         end
     else
         link = "legislationMainDisplayed.aspx?"
@@ -44,17 +54,6 @@ function M.link(data, content)
         rule,
         content
     )
-end
-
----@param left table: left operand
----@param right table: right operand
-function M.equal(left, right)
-    if left.name ~= right.name then return false end
-    if left.code ~= right.code then return false end
-    if left.section ~= right.section then return false end
-    if left.rule ~= right.rule then return false end
-
-    return true
 end
 
 return M

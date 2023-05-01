@@ -35,18 +35,18 @@ M.create_commands = function()
         if input == "" then
             include = true
         end
-        legislation.add(
-            name,
-            code,
-            section,
-            rule,
-            include)
+
+        cache.update_cache(
+            "legislations",
+            legislation.new(
+                name, code, section, rule, include
+            )
+        )
     end, {})
 
     vim.api.nvim_create_user_command("DSAddCase", function()
-        local parsed = case.parse(
-            util.get_visual_selection().content
-        )
+        local new_case = case.new()
+        new_case:parse(util.get_visual_selection().content)
         local include = false
         local islocal = false
 
@@ -58,7 +58,8 @@ M.create_commands = function()
         if input == "" then
             islocal = true
         end
-        case.add(parsed.name, parsed.citations, islocal, include)
+
+        cache.update_cache("cases", new_case)
     end, { range = "%" })
 
     vim.api.nvim_create_user_command("DSAddCaseManual", function()
@@ -79,7 +80,11 @@ M.create_commands = function()
         if input == "" then
             include = true
         end
-        case.add(name, citations, islocal, include)
+
+        cache.update_cache(
+            "cases",
+            case.new(name, citations, islocal, include)
+        )
     end, {})
 
     vim.api.nvim_create_user_command(

@@ -1,3 +1,6 @@
+local case = require("dstools.case")
+local citation = require("dstools.citation")
+local legislation = require("dstools.legislation")
 local util = require("dstools.util")
 local json = require("dstools.dependencies.json")
 
@@ -48,9 +51,27 @@ function M.load_cache(path)
     local lines = {}
     local file = io.open(path, "r")
     if file then
-        data = file:read("*all")
+        data = json.decode(file:read("*all"))
         io.close(file)
-        return json.decode(data)
+
+        for i,v in ipairs(data.cases) do
+            if v.islocal then
+                for j,w in ipairs(v.citations) do
+                    v.citations[j] = citation.new(
+                        w.type, w.year, w.vol, w.page
+                    )
+                end
+            end
+            data.cases[i] = case.new(v.name, v.citations, v.islocal, v.include)
+        end
+
+        for i,v in ipairs(data.legislations) do
+            data.legislations[i] = legislation.new(
+                v.name, v.code, v.section, v.rule, v.include
+            )
+        end
+
+        return data
     end
     return nil
 end

@@ -39,9 +39,8 @@ function M.toggle_replace_func(type, bufnr, picker)
     return function()
         local selection = action_state.get_selected_entry()
         local temp = cache.get_cache()
-        local isequal = type == "legislations" and legislation.equal or case.equal
         for i,v in ipairs(temp[type]) do
-            if isequal(selection.value, v) then
+            if selection.value == v then
                 M.toggle_include(temp[type][i].include, bufnr - 2, picker)
                 temp[type][i].include = not temp[type][i].include
             end
@@ -91,7 +90,7 @@ function M.search_case(opts)
                     visual_select.start_pos[3] - 1,
                     visual_select.end_pos[2] - 1,
                     visual_select.end_pos[3],
-                    { case.link(selection.value) }
+                    { selection.value:link() }
                 )
             end)
             actions.toggle_selection:replace(
@@ -150,7 +149,7 @@ function M.search_legislation(opts)
                     visual_select.start_pos[3] - 1,
                     visual_select.end_pos[2] - 1,
                     visual_select.end_pos[3],
-                    { legislation.link(selection.value, visual_select.content) }
+                    { selection.value:link(visual_select.content) }
                 )
             end)
             actions.toggle_selection:replace(

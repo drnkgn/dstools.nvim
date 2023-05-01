@@ -1,59 +1,67 @@
 local M = {}
+M.__index = M
 
-function M.parse(str)
-    local parsed = {
-        year = nil,
-        vol = nil,
-        type = nil,
-        page = nil,
-    }
+function M.new(type, year, vol, page)
+    local instance = setmetatable({}, M)
+    instance.type = type
+    instance.year = year
+    instance.vol  = vol
+    instance.page = page
+    return instance
+end
+
+function M:parse(str)
     local tokens = vim.split(str, " ")
-    parsed.year = string.match(tokens[1], "%d+")
-    parsed.page = tokens[#tokens]
+    self.year = string.match(tokens[1], "%d+")
+    self.page = tokens[#tokens]
     for idx = 2,#tokens-1 do
         if string.match(tokens[idx], "[%(%)A-Z]+") then
-            if not parsed.type then
-                parsed.type = tokens[idx]
+            if not self.type then
+                self.type = tokens[idx]
             else
-                parsed.type = (
-                    parsed.type ..
+                self.type = (
+                    self.type ..
                     " " ..
                     tokens[idx]
                 )
             end
         else
-            parsed.vol = tokens[idx]
+            self.vol = tokens[idx]
         end
     end
-    return parsed
 end
 
-function M.construct(citation)
-    local vol = citation.vol or ""
-    if citation.vol then
-        vol = vol .. " "
-    end
-    return string.format(
-        "[%s] %s%s %s",
-        citation.year,
-        vol,
-        citation.type,
-        citation.page
-    )
-end
+--- Format citation based on `style`
+--- @param style string: "citation" => [YEAR] VOL TYPE PAGE
+---                      "pageid"   => TYPE_YEAR_VOL_PAGE
+function M:format(style)
+    local vol = self.vol or ""
 
-function M.pageid(citation)
-    local vol = citation.vol or ""
-    if citation.vol then
-        vol = vol .. "_"
+    if style == "citation" then
+        if self.vol then
+            vol = vol .. " "
+        end
+        return string.format(
+            "[%s] %s%s %s",
+            self.year,
+            vol,
+            self.type,
+            self.page
+        )
+    elseif style == "pageid" then
+        if self.vol then
+            vol = vol .. "_"
+        end
+        return string.format(
+            "%s_%s_%s%s",
+            self.type,
+            self.year,
+            vol,
+            self.page
+        )
+    else
+        assert(false, "Invalid citation format style")
     end
-    return string.format(
-        "%s_%s_%s%s",
-        citation.type,
-        citation.year,
-        vol,
-        citation.page
-    )
 end
 
 return M
