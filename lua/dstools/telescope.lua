@@ -22,7 +22,7 @@ local M = {}
 ---@param picker picker: picker table
 function M.toggle_include(state, bufnr, picker)
     local row = picker:get_selection_row()
-    local pre = "  " .. (not state and icon_map.tick or icon_map.untick) .. " "
+    local pre = "> " .. (not state and icon_map.tick or icon_map.untick) .. " "
     -- change the icon only
     vim.api.nvim_buf_set_text(bufnr, row, 0, row, #pre, { pre })
 end
@@ -79,6 +79,10 @@ function M.search_case(opts)
         sorter = conf.generic_sorter(opts),
         attach_mappings = function(prompt_bufnr, map)
             local picker = action_state.get_current_picker(prompt_bufnr)
+
+            map({"i", "n"}, "<Tab>", nil)
+            map({"i", "n"}, "<S-Tab>", actions.toggle_selection)
+
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
@@ -139,6 +143,10 @@ function M.search_legislation(opts)
         sorter = conf.generic_sorter(opts),
         attach_mappings = function(prompt_bufnr, map)
             local picker = action_state.get_current_picker(prompt_bufnr)
+
+            map({"i", "n"}, "<Tab>", nil)
+            map({"i", "n"}, "<S-Tab>", actions.toggle_selection)
+
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
