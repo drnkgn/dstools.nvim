@@ -1,0 +1,34 @@
+{
+    "legislations": [
+        {
+            "name": "Rules of Court 2012",
+            "code": "MY_PUAS_2012_205",
+            "section": "53",
+            "rule": "2",
+            "include": true
+        }
+    ],
+    "cases": [
+        {
+            "name": "A v. B",
+            "citations": [
+                {
+                    "type": "MLRA",
+                    "year": "2010",
+                    "vol": "2",
+                    "page": "293"
+                }
+            ],
+            "islocal": true,
+            "include": true
+        },
+        {
+            "name": "C v. D",
+            "citations": [
+                "[1982] 3 All ER 38"
+            ],
+            "islocal": false,
+            "include": false
+        }
+    ]
+}
