@@ -4,14 +4,14 @@ local util = require "dstools.util"
 
 local TestUtil = {}
 
-function TestUtil:test_iff()
+function TestUtil:TestIff()
     --- Expected: false
     local a = true
     local result = util.iff(a, false, "test")
     lu.assertFalse(result)
 end
 
-function TestUtil:test_ifnil()
+function TestUtil:TestIfnil()
     --- Expected: false
     local a = false
     local result = util.ifnil(a, "test")

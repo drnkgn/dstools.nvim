@@ -5,7 +5,20 @@ local legislation = require "dstools.legislation"
 
 local TestLegislation = {}
 
-function TestLegislation:TestNewWithParams()
+function TestLegislation:TestNewWithParamsWithoutSectionAndRule()
+    local obj = legislation.new(
+        "Rules of Court 2012",
+        "MY_PUAS_2012_205",
+        "", "", true
+    )
+
+    local expected = vim.deepcopy(helper.value.legislation)
+    expected.section, expected.rule = nil, nil
+
+    helper.assertLegislation(obj, expected)
+end
+
+function TestLegislation:TestNewWithParamsWithSectionAndRule()
     local obj = legislation.new(
         "Rules of Court 2012",
         "MY_PUAS_2012_205",
