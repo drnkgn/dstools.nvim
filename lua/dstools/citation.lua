@@ -19,11 +19,7 @@ function M:parse(str)
             if not self.type then
                 self.type = tokens[idx]
             else
-                self.type = (
-                    self.type ..
-                    " " ..
-                    tokens[idx]
-                )
+                self.type = (self.type .. " " .. tokens[idx])
             end
         else
             self.vol = tokens[idx]

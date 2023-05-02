@@ -33,9 +33,7 @@ M.create_commands = function()
 
         cache.update_cache(
             "legislations",
-            legislation.new(
-                name, code, section, rule, include
-            )
+            legislation.new(name, code, section, rule, include)
         )
     end, {})
 
