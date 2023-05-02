@@ -26,11 +26,6 @@ M.create_commands = function()
         local rule = vim.fn.input("Rule: ")
         local include = false
 
-        -- set redundant variables to nil
-        -- required due to how linking was implemented
-        if section == "" then section = nil end
-        if rule == "" then rule = nil end
-
         local input = vim.fn.input("Include? (ENTER/n): ")
         if input == "" then
             include = true

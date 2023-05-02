@@ -16,8 +16,8 @@ function M.new(name, code, section, rule, include)
     local instance = setmetatable({}, M)
     instance.name    = name or ""
     instance.code    = code or ""
-    instance.section = section -- section can be nil
-    instance.rule    = rule    -- rule can be nil
+    instance.section = util.iff(section == "", nil, section)
+    instance.rule    = util.iff(rule == "", nil, rule)
     instance.include = util.ifnil(include, true)
     return instance
 end
