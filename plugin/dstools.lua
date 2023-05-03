@@ -11,10 +11,6 @@ if file_exists(".dsconf") then
         group = dstools,
         pattern = "xml",
         callback = function()
-            -- The number of the buffer in which `dstools` is active
-            -- Used to access `vim.b.ds_cache` from other buffers when needed
-            vim.g.dsbufnr = vim.api.nvim_win_get_buf(0)
-
             require("dstools").setup()
 
             vim.api.nvim_create_autocmd("ExitPre", {
