@@ -22,4 +22,9 @@ if file_exists(".dsconf") then
             })
         end
     })
+
+    vim.keymap.set("v", "<leader>dsc", ":DSSearchCases<cr>")
+    vim.keymap.set("v", "<leader>dsl", ":DSSearchLegislations<cr>")
+    vim.keymap.set("v", "<leader>dnc", ":DSAddCase<cr>")
+    vim.keymap.set("n", "<leader>dnl", ":DSAddLegislation<cr>")
 end
