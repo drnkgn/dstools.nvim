@@ -49,6 +49,32 @@ function M.toggle_replace_func(type, bufnr, picker)
     end
 end
 
+---@param bufnr number: buffer number of the 'result' window
+---@param keep_selected bool: should keep the visual selection content?
+function action_replace_text(bufnr, keep_selected)
+    return function()
+        actions.close(bufnr)
+        local selection = action_state.get_selected_entry()
+        local visual_select = util.get_visual_selection()
+        local content = nil
+
+        if keep_selected then
+            local temp = case.new() 
+            temp:parse(visual_select.content)
+            content = temp.name
+        end
+
+        vim.api.nvim_buf_set_text(
+            0,
+            visual_select.start_pos[2] - 1,
+            visual_select.start_pos[3] - 1,
+            visual_select.end_pos[2] - 1,
+            visual_select.end_pos[3],
+            { selection.value:link(content) }
+        )
+    end
+end
+
 function M.search_case(opts)
     local displayer = entry_display.create({
         separator = "",
@@ -82,21 +108,11 @@ function M.search_case(opts)
 
             map({"i", "n"}, "<Tab>", nil)
             map({"i", "n"}, "<S-Tab>", actions.toggle_selection)
+            map({"i", "n"}, "<S-CR>", action_replace_text(prompt_bufnr, true))
 
-            actions.select_default:replace(function()
-                actions.close(prompt_bufnr)
-                local selection = action_state.get_selected_entry()
-                local visual_select = util.get_visual_selection()
-                -- CHORE: probably shouldn't replace everything
-                vim.api.nvim_buf_set_text(
-                    0,
-                    visual_select.start_pos[2] - 1,
-                    visual_select.start_pos[3] - 1,
-                    visual_select.end_pos[2] - 1,
-                    visual_select.end_pos[3],
-                    { selection.value:link() }
-                )
-            end)
+            actions.select_default:replace(
+                action_replace_text(prompt_bufnr, false)
+            )
             actions.toggle_selection:replace(
                 M.toggle_replace_func("cases", prompt_bufnr, picker)
             )
@@ -147,22 +163,13 @@ function M.search_legislation(opts)
             map({"i", "n"}, "<Tab>", nil)
             map({"i", "n"}, "<S-Tab>", actions.toggle_selection)
 
-            actions.select_default:replace(function()
-                actions.close(prompt_bufnr)
-                local selection = action_state.get_selected_entry()
-                local visual_select = util.get_visual_selection()
-                vim.api.nvim_buf_set_text(
-                    0,
-                    visual_select.start_pos[2] - 1,
-                    visual_select.start_pos[3] - 1,
-                    visual_select.end_pos[2] - 1,
-                    visual_select.end_pos[3],
-                    { selection.value:link(visual_select.content) }
-                )
-            end)
+            actions.select_default:replace(
+                action_replace_text(prompt_bufnr, true)
+            )
             actions.toggle_selection:replace(
                 M.toggle_replace_func("legislations", prompt_bufnr, picker)
             )
+
             return true
         end,
     }):find()

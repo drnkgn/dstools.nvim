@@ -46,13 +46,14 @@ function M:update(name, citations, islocal, include)
     self.include   = util.ifnil(include, self.include)
 end
 
-function M:link()
+function M:link(content)
+    local name = content or self.name
     local res = ""
     if self.islocal then
         res = {string.format(
             "<LINK HREF=\"case_notes/showcase.aspx?pageid=%s;\"><i>%s</i> %s</LINK>",
             self.citations[1]:format("pageid"),
-            self.name,
+            name,
             self.citations[1]:format("citation")
         )}
         for idx = 2,#self.citations do
@@ -70,7 +71,7 @@ function M:link()
             end
         end
     else
-        res = { string.format("<i>%s</i> %s", self.name, self.citations[1]) }
+        res = { string.format("<i>%s</i> %s", name, self.citations[1]) }
         for idx = 2,#self.citations do
             res[#res+1] = string.format(
                 "; %s",
