@@ -38,21 +38,27 @@ M.create_commands = function()
     end, {})
 
     vim.api.nvim_create_user_command("DSAddCase", function()
+        local visual_select = util.get_visual_selection()
         local new_case = case.new()
-        new_case:parse(util.get_visual_selection().content)
         local include = false
-        local islocal = false
 
         local input = vim.fn.input("Include? (ENTER/n): ")
         if input == "" then
             include = true
         end
-        input = vim.fn.input("Local? (ENTER/n): ")
-        if input == "" then
-            islocal = true
-        end
 
+        new_case:parse(visual_select.content)
+        new_case:update(nil, nil, include, true)
         cache.update_cache("cases", new_case)
+
+        vim.api.nvim_buf_set_text(
+            0,
+            visual_select.start_pos[2] - 1,
+            visual_select.start_pos[3] - 1,
+            visual_select.end_pos[2] - 1,
+            visual_select.end_pos[3],
+            { new_case:link() }
+        )
     end, { range = "%" })
 
     vim.api.nvim_create_user_command("DSAddCaseManual", function()
