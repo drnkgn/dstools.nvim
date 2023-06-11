@@ -162,6 +162,23 @@ function M.search_legislation(opts)
 
             map({"i", "n"}, "<Tab>", nil)
             map({"i", "n"}, "<S-Tab>", actions.toggle_selection)
+            map({"i", "n"}, "<C-d>", function()
+                actions.close(prompt_bufnr)
+                local selected = action_state.get_selected_entry()
+                local duped = legislation.new(
+                    selected.value.name,
+                    selected.value.code,
+                    vim.fn.input("Section: "),
+                    vim.fn.input("Rule: ")
+                )
+
+                local input = vim.fn.input("Include? (ENTER/n): ")
+                local include = util.iff(input == "", true, false)
+
+                duped:update(nil, nil, nil, nil, include)
+
+                cache.update_cache("legislations", duped)
+            end)
 
             actions.select_default:replace(
                 action_replace_text(prompt_bufnr, true)
