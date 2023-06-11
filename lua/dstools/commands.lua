@@ -40,15 +40,12 @@ M.create_commands = function()
     vim.api.nvim_create_user_command("DSAddCase", function()
         local visual_select = util.get_visual_selection()
         local new_case = case.new()
-        local include = false
 
         local input = vim.fn.input("Include? (ENTER/n): ")
-        if input == "" then
-            include = true
-        end
+        local include = util.iff(input == "", true, false)
 
         new_case:parse(visual_select.content)
-        new_case:update(nil, nil, include, true)
+        new_case:update(nil, nil, true, include)
         cache.update_cache("cases", new_case)
 
         vim.api.nvim_buf_set_text(
